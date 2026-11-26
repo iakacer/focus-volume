@@ -15,6 +15,7 @@ New-Item -ItemType Directory -Force "$dist\bin" | Out-Null
     /r:"$fw\System.Web.Extensions.dll" /r:System.Windows.Forms.dll /r:System.Drawing.dll `
     "$root\src\FocusVolume.cs"
 if ($LASTEXITCODE -ne 0) { throw 'Compile failed' }
+Copy-Item "$root\src\FocusVolume.exe.config" "$dist\bin\"
 
 # Speaker icon, drawn at any size
 Add-Type -AssemblyName System.Drawing
@@ -40,7 +41,7 @@ function New-Icon([string]$path, [int]$size, [bool]$bg) {
 function New-PluginFolder([string]$host_) {
     $out = "$dist\$host_\$id.sdPlugin"
     New-Item -ItemType Directory -Force "$out\images" | Out-Null
-    Copy-Item "$dist\bin\FocusVolume.exe", "$root\plugin\$host_\manifest.json", "$root\plugin\shared\*" $out
+    Copy-Item "$dist\bin\FocusVolume.exe", "$dist\bin\FocusVolume.exe.config", "$root\plugin\$host_\manifest.json", "$root\plugin\shared\*" $out
     Copy-Item "$root\LICENSE" $out -ErrorAction SilentlyContinue
     foreach ($i in @(@('plugin', 256, $true), @('key', 72, $true), @('action', 20, $false), @('category', 28, $false))) {
         New-Icon "$out\images\$($i[0]).png" $i[1] $i[2]

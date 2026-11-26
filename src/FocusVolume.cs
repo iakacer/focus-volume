@@ -24,7 +24,7 @@ class Settings
 
 static class L
 {
-    public static bool Zh = CultureInfo.CurrentUICulture.Name.StartsWith("zh");
+    public static bool Zh = false; // English unless the host app runs in Chinese
     public static string Muted { get { return Zh ? "已静音" : "Muted"; } }
     public static string NoSession { get { return Zh ? "没有音频会话" : "No audio session"; } }
     public static string Unknown { get { return Zh ? "未知应用" : "Unknown app"; } }
@@ -40,6 +40,7 @@ static class Program
     static readonly Dictionary<string, Settings> Contexts = new Dictionary<string, Settings>();
     static readonly HashSet<string> TouchDials = new HashSet<string>(); // Stream Deck+ dials (have a touch strip)
     static int lastMuteTick = -10000;
+    static System.Windows.Forms.Timer trimTimer;
 
     [STAThread]
     static int Main(string[] args)
@@ -53,6 +54,10 @@ static class Program
 
         osd = new Osd();
         IntPtr h = osd.Handle; // create the handle on the UI thread so BeginInvoke can marshal to it
+        // A few seconds after the last event, hand unused memory back to Windows
+        trimTimer = new System.Windows.Forms.Timer { Interval = 3000 };
+        trimTimer.Tick += delegate { trimTimer.Stop(); Native.SetProcessWorkingSetSize(Native.GetCurrentProcess(), (IntPtr)(-1), (IntPtr)(-1)); };
+        trimTimer.Start();
         var t = new Thread(delegate () { SocketLoop(port, uuid, reg); });
         t.IsBackground = true;
         t.Start();
@@ -119,6 +124,8 @@ static class Program
 
     static void Handle(string msg)
     {
+        trimTimer.Stop();
+        trimTimer.Start();
         try
         {
             var m = Json.Deserialize<Dictionary<string, object>>(msg);
@@ -649,6 +656,8 @@ class Osd : Form
 static class Native
 {
     [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
+    [DllImport("kernel32.dll")] public static extern IntPtr GetCurrentProcess();
+    [DllImport("kernel32.dll")] public static extern bool SetProcessWorkingSetSize(IntPtr proc, IntPtr min, IntPtr max);
     [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid);
     public delegate bool EnumProc(IntPtr hwnd, IntPtr lParam);
