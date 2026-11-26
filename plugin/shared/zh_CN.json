@@ -1,0 +1,17 @@
+{
+  "Name": "前台应用音量",
+  "Description": "旋钮控制当前前台应用的音量，按下切换静音",
+  "Category": "前台应用音量",
+  "com.iakacer.focusvolume.dial": {
+    "Name": "前台应用音量",
+    "Tooltip": "旋转调节当前窗口所属应用的音量，按下静音",
+    "Encoder": {
+      "TriggerDescription": {
+        "Rotate": "音量",
+        "Push": "静音",
+        "Touch": "静音"
+      }
+    }
+  },
+  "Localization": {}
+}

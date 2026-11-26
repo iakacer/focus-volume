@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "UUID": "com.iakacer.focusvolume",
+  "Actions": [
+    {
+      "Icon": "images/action",
+      "Name": "Focus Volume",
+      "States": [
+        {
+          "Image": "images/key"
+        }
+      ],
+      "Controllers": ["Encoder"],
+      "Encoder": {
+        "layout": "$B1",
+        "TriggerDescription": {
+          "Rotate": "Volume",
+          "Push": "Mute",
+          "Touch": "Mute"
+        }
+      },
+      "SupportedInMultiActions": false,
+      "Tooltip": "Turn to change the volume of the app in the foreground. Press to mute it.",
+      "UUID": "com.iakacer.focusvolume.dial",
+      "PropertyInspectorPath": "pi.html"
+    }
+  ],
+  "SDKVersion": 2,
+  "Author": "iakacer",
+  "Category": "Focus Volume",
+  "CategoryIcon": "images/category",
+  "CodePathWin": "FocusVolume.exe",
+  "Description": "A dial controls the volume of whichever app is in the foreground.",
+  "Name": "Focus Volume",
+  "Icon": "images/plugin",
+  "URL": "https://github.com/iakacer/focus-volume",
+  "Version": "1.0.0.0",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Software": {
+    "MinimumVersion": "6.4"
+  }
+}

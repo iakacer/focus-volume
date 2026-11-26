@@ -1,0 +1,18 @@
+# Push a tag like v1.0.0 to build both packages and attach them to a GitHub release.
+name: release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: .\build.ps1
+        shell: pwsh
+      - run: gh release create $env:GITHUB_REF_NAME dist\FocusVolume-StreamDock.zip dist\com.iakacer.focusvolume.streamDeckPlugin --generate-notes
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,10 @@
+{
+  "Name": "Focus Volume",
+  "Description": "A dial controls the volume of whichever app is in the foreground.",
+  "Category": "Focus Volume",
+  "com.iakacer.focusvolume.dial": {
+    "Name": "Focus Volume",
+    "Tooltip": "Turn to change the volume of the app in the foreground. Press to mute it."
+  },
+  "Localization": {}
+}

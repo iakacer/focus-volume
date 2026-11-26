@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Focus Volume</title>
+<style>
+  body { margin: 0; padding: 10px 12px; background: transparent; color: #d8d8d8;
+         font: 13px "Segoe UI", "Microsoft YaHei UI", sans-serif; }
+  .row { display: flex; align-items: center; margin: 8px 0; }
+  .row label { width: 100px; color: #9a9a9a; }
+  input[type=number] { width: 70px; background: #3d3d3d; color: #eee; border: 1px solid #555;
+                       border-radius: 3px; padding: 3px 6px; }
+  .hint { color: #7a7a7a; font-size: 12px; margin-top: 12px; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <label for="step" data-t="step">Step per tick</label>
+    <input id="step" type="number" min="1" max="50" step="1" value="5" />&nbsp;%
+  </div>
+  <div class="row">
+    <label for="osd" data-t="osd">On-screen display</label>
+    <input id="osd" type="checkbox" checked />
+  </div>
+  <div class="hint" data-t="hint">Turn: change the volume of the app in the foreground.<br />Press: mute or unmute that app.</div>
+
+<script>
+  const ZH = {
+    step: '每格步长',
+    osd: '屏幕提示',
+    hint: '旋转：调节当前前台窗口所属应用的音量<br />按下：切换该应用静音'
+  };
+  let ws, ctx, settings = {};
+  const step = document.getElementById('step');
+  const osd = document.getElementById('osd');
+
+  function translate(lang) {
+    if (!lang || !lang.startsWith('zh')) return;
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = ZH[el.dataset.t]; });
+  }
+
+  function render() {
+    step.value = settings.step || 5;
+    osd.checked = settings.osd !== false;
+  }
+
+  function save() {
+    let v = Math.round(Number(step.value));
+    if (!(v >= 1)) v = 5;
+    settings.step = Math.min(50, v);
+    settings.osd = osd.checked;
+    if (ws && ws.readyState === 1)
+      ws.send(JSON.stringify({ event: 'setSettings', context: ctx, payload: settings }));
+  }
+
+  step.addEventListener('change', save);
+  osd.addEventListener('change', save);
+
+  // Entry point called by both Stream Deck and Stream Dock
+  function connectElgatoStreamDeckSocket(port, uuid, event, app, info) {
+    try { translate(JSON.parse(app).application.language); } catch (e) {}
+    info = JSON.parse(info || '{}');
+    ctx = info.context || uuid;
+    if (info.payload && info.payload.settings) { settings = info.payload.settings; render(); }
+    ws = new WebSocket('ws://127.0.0.1:' + port);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ event, uuid }));
+      ws.send(JSON.stringify({ event: 'getSettings', context: ctx }));
+    };
+    ws.onmessage = e => {
+      const d = JSON.parse(e.data);
+      if (d.event === 'didReceiveSettings' && d.payload) { settings = d.payload.settings || {}; render(); }
+    };
+  }
+  const connectSocket = connectElgatoStreamDeckSocket;
+</script>
+</body>
+</html>

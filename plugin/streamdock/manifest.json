@@ -1,0 +1,38 @@
+{
+  "Actions": [
+    {
+      "Icon": "images/key",
+      "Name": "Focus Volume",
+      "States": [
+        {
+          "Image": "images/key"
+        }
+      ],
+      "Controllers": ["Knob"],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Turn to change the volume of the app in the foreground. Press to mute it.",
+      "UUID": "com.iakacer.focusvolume.dial",
+      "PropertyInspectorPath": "pi.html"
+    }
+  ],
+  "SDKVersion": 1,
+  "Author": "iakacer",
+  "Category": "Focus Volume",
+  "CategoryIcon": "images/category",
+  "CodePath": "FocusVolume.exe",
+  "CodePathWin": "FocusVolume.exe",
+  "Description": "A dial controls the volume of whichever app is in the foreground.",
+  "Name": "Focus Volume",
+  "Icon": "images/plugin",
+  "URL": "https://github.com/iakacer/focus-volume",
+  "Version": "1.0.0",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Software": {
+    "MinimumVersion": "2.10.179.426"
+  }
+}
